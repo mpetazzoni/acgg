@@ -27,16 +27,19 @@ def get_assignments(org_id, event_id, auth):
         items = soup.find_all('assignment')
         logging.debug('Found %d assignments.', len(items))
 
+    def f(*fields):
+        return ' '.join([f.text for f in fields]).strip() or None
 
     assignments = {}
     for item in items:
         assignments[item.id.text] = {
-            'attendee': item.attendeeid.text,
-            'group': item.group.text,
-            'name': '{} {}'.format(item.firstname.text, item.lastname.text),
-            'car': '{} {}'.format(item.make.text, item.model.text),
-            'instructor': '{} {}'.format(item.instructorfirstname.text,
-                                         item.instructorlastname.text),
+            'attendee': f(item.attendeeid),
+            'class': f(item.classshort),
+            'group': f(item.group),
+            'name': f(item.firstname, item.lastname),
+            'car': f(item.make, item.model),
+            'instructor': f(item.instructorfirstname,
+                            item.instructorlastname),
         }
     return assignments
 
